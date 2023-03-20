@@ -13,7 +13,7 @@ static const byte ZZ_SCAN8[64] =
    58, 59, 52, 45, 38, 31, 39, 46, 53, 60, 61, 54, 47, 55, 62, 63
 };
 
-int ParameterSet::ProcessSPS(seq_parameter_set_rbsp* sps, BitStream* bitstream){
+int ParameterSet::ProcessSPS(seq_parameter_set_rbsp* sps, BitStream* bitstream, VideoParameters* vptr){
     if(!sps || !bitstream) return 0;
 
     sps->profile_idc = bitstream->bs_read_u8();
@@ -104,6 +104,9 @@ int ParameterSet::ProcessSPS(seq_parameter_set_rbsp* sps, BitStream* bitstream){
   if(sps->vui_parameters_present_flag){
     vui_parameters(sps, bitstream);
   }
+  sps->Valid = TRUE;
+  vptr->active_sps = sps;
+  vptr->SeqParSet[sps->seq_parameter_set_id] = sps;
   return bitstream->getUsedBits();
 }
 
@@ -195,7 +198,7 @@ int ParameterSet::read_hrd_parameters(hrd_parameters *hrd, BitStream* bitstream)
   return 0;
 }
 
-int ParameterSet::ProcessPPS(pic_parameter_set_rbsp* pps, BitStream* bitstream){
+int ParameterSet::ProcessPPS(pic_parameter_set_rbsp* pps, BitStream* bitstream, VideoParameters* vptr){
   if(!pps || !bitstream) return 0;
 
   pps->pic_parameter_set_id = bitstream->bs_read_ue();
@@ -273,7 +276,7 @@ int ParameterSet::ProcessPPS(pic_parameter_set_rbsp* pps, BitStream* bitstream){
   pps->constrained_intra_pred_flag           = (Boolean)bitstream->bs_read_u1();
   pps->redundant_pic_cnt_present_flag        = (Boolean)bitstream->bs_read_u1();
 
-  if(more_rbsp_data(s->streamBuffer, s->frame_bitoffset,s->bitstream_length)) // more_data_in_rbsp()
+  if(bitstream->more_data()) // more_data_in_rbsp()
   {
     //Fidelity Range Extensions Stuff
     pps->transform_8x8_mode_flag           =  (Boolean)bitstream->bs_read_u1();
@@ -281,7 +284,7 @@ int ParameterSet::ProcessPPS(pic_parameter_set_rbsp* pps, BitStream* bitstream){
 
     if(pps->pic_scaling_matrix_present_flag)
     {
-      int chroma_format_idc = p_Vid->SeqParSet[pps->seq_parameter_set_id].chroma_format_idc;
+      int chroma_format_idc = vptr->SeqParSet[pps->seq_parameter_set_id]->chroma_format_idc;
       int n_ScalingList = 6 + ((chroma_format_idc != YUV444) ? 2 : 6) * pps->transform_8x8_mode_flag;
       for(int i=0; i<n_ScalingList; i++)
       {
@@ -290,9 +293,9 @@ int ParameterSet::ProcessPPS(pic_parameter_set_rbsp* pps, BitStream* bitstream){
         if(pps->pic_scaling_list_present_flag[i])
         {
           if(i<6)
-            Scaling_List(pps->ScalingList4x4[i], 16, &pps->UseDefaultScalingMatrix4x4Flag[i], s);
+            Scaling_List(pps->ScalingList4x4[i], 16, &pps->UseDefaultScalingMatrix4x4Flag[i], bitstream);
           else
-            Scaling_List(pps->ScalingList8x8[i-6], 64, &pps->UseDefaultScalingMatrix8x8Flag[i-6], s);
+            Scaling_List(pps->ScalingList8x8[i-6], 64, &pps->UseDefaultScalingMatrix8x8Flag[i-6], bitstream);
         }
       }
     }
@@ -304,6 +307,8 @@ int ParameterSet::ProcessPPS(pic_parameter_set_rbsp* pps, BitStream* bitstream){
   }
 
   pps->Valid = TRUE;
+  vptr->active_pps = pps;
+  vptr->PicParSet[pps->pic_parameter_set_id] = pps;
   return bitstream->getUsedBits();
 }
 

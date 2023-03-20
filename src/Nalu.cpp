@@ -4,6 +4,8 @@
 #include <cstring>
 #include "ParameterSet.h"
 #include "BitStream.h"
+#include "VideoParameters.h"
+
 
 namespace HM{
 
@@ -72,7 +74,11 @@ void Nalu::ParseHeader(uint8_t* header){
     nal_unit_type       = NaluType((naluHead >> 0) & 0x1f);//5bit
 }
 
-void Nalu::ProcessNalu(){
+void Nalu::ProcessNalu(VideoParameters* vptr){
+    uint8_t* buffStream = ebsp.rbsp.buf;
+    int sdop_len = ebsp.rbsp.RBSPtoSODB();
+    BitStream bitstream(buffStream, sdop_len);
+    
     switch(nal_unit_type){
         case NALU_TYPE_SLICE:
         case NALU_TYPE_IDR:{
@@ -80,23 +86,18 @@ void Nalu::ProcessNalu(){
             break;
         }
         case NALU_TYPE_SPS:{
-
-            uint8_t* buffStream = ebsp.rbsp.buf;
-            int sdop_len = ebsp.rbsp.RBSPtoSODB();
-            BitStream bitstream(buffStream, sdop_len);
-
             auto sps = new seq_parameter_set_rbsp();
-            ParameterSet::ProcessSPS(sps, &bitstream);
-
+            auto ret = ParameterSet::ProcessSPS(sps, &bitstream, vptr);
+            if(!sps->Valid)
+                delete sps;
             break;
         }
         case NALU_TYPE_PPS:{
-            uint8_t* buffStream = ebsp.rbsp.buf;
-            int sdop_len = ebsp.rbsp.RBSPtoSODB();
-            BitStream bitstream(buffStream, sdop_len);
-
             auto pps = new pic_parameter_set_rbsp();
-            ParameterSet::ProcessPPS(pps, &bitstream);
+            auto ret = ParameterSet::ProcessPPS(pps, &bitstream, vptr);
+            if(!pps->Valid)
+                delete pps;
+            break;
         }
         default:{
             //if (p_Inp->silent == FALSE)

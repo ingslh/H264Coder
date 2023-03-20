@@ -2,6 +2,7 @@
 #include "typedefs.h"
 #include "defines.h"
 #include "BitStream.h"
+#include "VideoParameters.h"
 
 #define MAXIMUMVALUEOFcpb_cnt   32
 struct hrd_parameters{
@@ -169,8 +170,8 @@ namespace HM{
 
 class ParameterSet{
 public:
-    static int ProcessSPS(seq_parameter_set_rbsp* sps, BitStream* bitstream);
-    static int ProcessPPS(pic_parameter_set_rbsp* pps, BitStream* bitstream);
+    static int ProcessSPS(seq_parameter_set_rbsp* sps, BitStream* bitstream, VideoParameters* vptr);
+    static int ProcessPPS(pic_parameter_set_rbsp* pps, BitStream* bitstream, VideoParameters* vptr);
 private:
     static int vui_parameters(seq_parameter_set_rbsp* sps, BitStream* bitstream);
     static int read_hrd_parameters(hrd_parameters *hrd, BitStream* bitstream);

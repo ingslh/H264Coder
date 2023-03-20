@@ -40,7 +40,7 @@ public:
     ~Nalu();
 
     Nalu & operator = (const Nalu & nalu);
-    void ProcessNalu();
+    void ProcessNalu(VideoParameters* vptr);
 
 private:
     int SetBuf(uint8_t * _buf, int _len);

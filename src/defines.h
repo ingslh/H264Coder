@@ -22,4 +22,13 @@ enum ProfileIDC{
   STEREO_HIGH    = 128       //!< YUV 4:2:0/8  "Stereo High"
 };
 
+typedef enum
+{
+  PAR_DP_1,   //!< no data partitioning is supported
+  PAR_DP_3    //!< data partitioning with 3 partitions
+} PAR_DP_TYPE;
+
 #define MVC_EXTENSION_ENABLE      1    //!< enable support for the Multiview High Profile
+
+#define MAXSPS  32
+#define MAXPPS  256
