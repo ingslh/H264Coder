@@ -4,8 +4,6 @@
 
 namespace HM{
 
-class Nalu{
-
 enum NaluType{
     NALU_TYPE_SLICE    = 1,
     NALU_TYPE_DPA      = 2,
@@ -34,6 +32,8 @@ enum NalRefIdc{
     NALU_PRIORITY_DISPOSABLE  = 0
 };
 
+class Nalu{
+
 public:
     Nalu(uint8_t * _buf, int _len, int startCodeLen);
     Nalu(const Nalu & nalu);
@@ -41,6 +41,9 @@ public:
 
     Nalu & operator = (const Nalu & nalu);
     void ProcessNalu(VideoParameters* vptr);
+
+    NaluType GetNalType()const {return nal_unit_type;}
+    NalRefIdc GetNalRefIdc()const {return nal_ref_idc;}
 
 private:
     int SetBuf(uint8_t * _buf, int _len);

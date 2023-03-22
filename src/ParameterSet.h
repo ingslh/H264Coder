@@ -3,6 +3,7 @@
 #include "defines.h"
 #include "BitStream.h"
 #include "VideoParameters.h"
+#include <vector>
 
 #define MAXIMUMVALUEOFcpb_cnt   32
 struct hrd_parameters{
@@ -164,6 +165,70 @@ struct seq_parameter_set_rbsp
     int max_dec_frame_buffering;
     #endif
     int lossless_qpprime_flag;
+};
+
+struct DecRefPicMarking
+{
+  int memory_management_control_operation;
+  int difference_of_pic_nums_minus1;
+  int long_term_pic_num;
+  int long_term_frame_idx;
+  int max_long_term_frame_idx_plus1;
+};
+
+struct Slice{
+  int idr_flag;
+
+  int first_mb_in_slice;
+  int slice_type;
+  int pic_parameter_set_id;
+  int colour_plane_id;
+
+  int frame_num;
+  int field_pic_flag;
+  byte bottom_field_flag;
+
+  int idr_pic_id;
+  int pic_order_cnt_lsb;
+  int delta_pic_order_cnt_bottom;
+
+  int delta_pic_order_cnt[2];
+  int redunant_pic_cnt;
+
+  int direct_spatial_mv_pred_flag;
+  int num_ref_idx_active[2]; 
+
+  //ref_pic_list_reordering()
+  int ref_pic_list_reordering_flag[2];
+  int *modification_of_pic_nums_idc[2]; 
+  int *abs_diff_pic_num_minus1[2];
+  int *long_term_pic_idx[2];
+
+  //pred_weight_table
+  unsigned short luma_log2_weight_denom;
+  unsigned short chroma_log2_weight_denom;
+  int luma_weight_flag_l0;
+  int **luma_weight;
+  int **luma_offset;
+  int chroma_weight_flag_l0;
+  int luma_weight_flag_l1;
+  int ***chroma_weight;
+  int ***chroma_offset;
+
+  //dec_ref_pic_marking
+  int no_output_of_prior_pics_flag;
+  int long_term_reference_flag;
+  int adaptive_ref_pic_buffering_flag;
+  std::vector<DecRefPicMarking> dec_ref_pic_marking_buffer;
+
+  int cabac_init_idc;
+  int slice_qp_delta;
+  int sp_for_switch_flag;
+  int slice_qs_delta;
+  short disable_deblocking_filter_idc;
+  short slice_alpha_c0_offset_div2;
+  short slice_beta_offset_div2;
+  int slice_group_change_cycle;
 };
 
 namespace HM{

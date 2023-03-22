@@ -26,10 +26,21 @@ enum {
 class Macroblock;
 class Slice{
 public:
-    Slice(VideoParameters* vptr, BitStream* curStream, Nalu* nalu);
+    Slice(VideoParameters* VidParams, BitStream* curStream, Nalu* nalu);
     void readOneMacroblock(Macroblock* curMb);
 
 private:
+    void ref_pic_list_reordering();
+    void pred_weight_table();
+    void dec_ref_pic_marking();
+
+private:
+    BitStream* bs = nullptr;
+    VideoParameters* vptr = nullptr;
+
+    short weighted_pred_flag;
+    short weighted_bipred_idc;
+
     int idr_flag = 0;
 
     int first_mb_in_slice;
@@ -56,17 +67,17 @@ private:
     int *modification_of_pic_nums_idc[2]; 
     int *abs_diff_pic_num_minus1[2];
     int *long_term_pic_idx[2];
+    int redundant_slice_ref_idx;     //!< reference index of redundant slice
 
     //pred_weight_table
     unsigned short luma_log2_weight_denom;
     unsigned short chroma_log2_weight_denom;
     int luma_weight_flag_l0;
-    int **luma_weight;
-    int **luma_offset;
+    int wp_weight[2][MAX_REFERENCE_PICTURES][3];
+    int wp_offset[6][MAX_REFERENCE_PICTURES][3];
     int chroma_weight_flag_l0;
     int luma_weight_flag_l1;
-    int ***chroma_weight;
-    int ***chroma_offset;
+    int chroma_weight_flag_l1;
 
     //dec_ref_pic_marking
     int no_output_of_prior_pics_flag;

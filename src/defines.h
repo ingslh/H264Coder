@@ -1,5 +1,7 @@
 #pragma once
 
+#define MAX_REFERENCE_PICTURES 32               //!< H.264 allows 32 fields
+
 enum ColorFormat{
   CF_UNKNOWN = -1,     //!< Unknown color format
   YUV400     =  0,     //!< Monochrome
@@ -22,11 +24,29 @@ enum ProfileIDC{
   STEREO_HIGH    = 128       //!< YUV 4:2:0/8  "Stereo High"
 };
 
-typedef enum
+enum ColorPlane
 {
+  // YUV
+  PLANE_Y = 0,  // PLANE_Y
+  PLANE_U = 1,  // PLANE_Cb
+  PLANE_V = 2,  // PLANE_Cr
+  // RGB
+  PLANE_G = 0,
+  PLANE_B = 1,
+  PLANE_R = 2
+};
+
+enum  PAR_DP_TYPE{
   PAR_DP_1,   //!< no data partitioning is supported
   PAR_DP_3    //!< data partitioning with 3 partitions
-} PAR_DP_TYPE;
+};
+
+enum PictureStructure
+{
+  FRAME,
+  TOP_FIELD,
+  BOTTOM_FIELD
+};           //!< New enum for field processing
 
 #define MVC_EXTENSION_ENABLE      1    //!< enable support for the Multiview High Profile
 

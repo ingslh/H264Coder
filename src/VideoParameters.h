@@ -12,6 +12,8 @@ struct VideoParameters{
 
   std::map<int, seq_parameter_set_rbsp*> SeqParSet;
   std::map<int, pic_parameter_set_rbsp*> PicParSet;
+
+  int structure;
   
 };
 
