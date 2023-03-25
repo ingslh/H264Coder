@@ -1,0 +1,3 @@
+#pragma once
+
+#define ASSERT_PATH "@ASSERT_PATH@"
