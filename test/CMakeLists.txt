@@ -2,20 +2,23 @@ cmake_minimum_required(VERSION 3.14)
 
 project(test)
 
-include(FetchContent)
-FetchContent_Declare(
-  googletest
-  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+message(${CMAKE_CURRENT_LIST_DIR})
+set(ASSERT_PATH  "${CMAKE_CURRENT_LIST_DIR}/../assets/" CACHE PATH "assets path")
+configure_file(
+	"${PROJECT_SOURCE_DIR}/test_config.h.in"
+    "${PROJECT_SOURCE_DIR}/test_config.h"
 )
 
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
+include_directories(
+    ${PROJECT_SOURCE_DIR}/third_party/googletest/googletest/include
+    ${PROJECT_SOURCE_DIR}/src
+)
 
-enable_testing()
+link_directories(${PROJECT_SOURCE_DIR}/third_party/googletest/build/lib)
 
-add_executable(${PROJECT_NAME} main.cpp test.cpp)
+add_executable(${PROJECT_NAME} test.cpp main.cpp)
 
-target_link_libraries(${PROJECT_NAME}  GTest::gtest_main src)
+target_link_libraries(${PROJECT_NAME} gtest src)
 
-include(GoogleTest)
-gtest_discover_tests(${PROJECT_NAME})
+
+

@@ -22,7 +22,9 @@ int EBSP::EBSPtoRBSP(uint8_t* stream, int end_bytepos, int begin_bytepos){
     count = 0;
 
     if(end_bytepos < begin_bytepos)
-    return end_bytepos;
+        return end_bytepos;
+
+    j = begin_bytepos;
 
     for(i = begin_bytepos; i < end_bytepos; ++i){
         //in NAL unit, 0x000000, 0x000001 or 0x000002 shall not occur at any byte-aligned position

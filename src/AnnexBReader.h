@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <string>
+#include <memory>
 #include "Nalu.h"
 
 namespace HM{
@@ -14,7 +15,7 @@ public:
     int Open();
     int Close();
 
-    int ReadNalu(Nalu* nalu);
+    int ReadNalu(std::shared_ptr<Nalu>& nalu);
 
 private:
     bool CheckStartCode(int & startCodeLen, uint8_t * bufPtr, int bufLen);

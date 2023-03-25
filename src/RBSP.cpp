@@ -12,10 +12,6 @@ RBSP::RBSP(const RBSP & rbsp)
 
 RBSP::~RBSP()
 {
-    if(buf != nullptr){
-        free(buf);
-        buf = nullptr;
-    }
 }
 
 RBSP& RBSP::operator = (const RBSP & rbsp)
@@ -33,8 +29,8 @@ RBSP& RBSP::operator = (const RBSP & rbsp)
 }
 
 int RBSP::RBSPtoSODB(){
-     uint8_t* stream = buf;
-     int last_byte_pos = len; 
+    uint8_t* stream = buf;
+    int last_byte_pos = len; 
 
     int ctr_bit, bitoffset;
     bitoffset = 0;

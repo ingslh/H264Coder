@@ -75,7 +75,7 @@ bool AnnexBReader::CheckStartCode(int& startCodeLen, uint8_t* bufPtr, int bufLen
     return false;
 }
 
-int AnnexBReader::ReadNalu(Nalu* nalu){
+int AnnexBReader::ReadNalu(std::shared_ptr<Nalu>& nalu){
     while(1){
         if(bufferLen <= 0){
             int readedLen = ReadFromFile();
@@ -103,7 +103,7 @@ int AnnexBReader::ReadNalu(Nalu* nalu){
         }
 
         if(endPos > 0){
-            nalu = new Nalu(buffer, endPos, startCodeLen);
+            nalu = std::make_shared<Nalu>(buffer, endPos, startCodeLen);
 
             uint8_t * _buffer = (uint8_t*)malloc(bufferLen - endPos);
             memcpy(_buffer, buffer + endPos, bufferLen - endPos);
@@ -120,7 +120,7 @@ int AnnexBReader::ReadNalu(Nalu* nalu){
         else{
             if(isEnd == true){
                 // Reach the end of the file, fetch all buffers out
-                nalu = new Nalu(buffer, bufferLen, startCodeLen);
+                nalu = std::make_shared<Nalu>(buffer, bufferLen, startCodeLen);
 
                 if(buffer != nullptr){
                     free(buffer);

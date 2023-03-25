@@ -99,6 +99,10 @@ void Nalu::ProcessNalu(VideoParameters* vptr){
                 delete pps;
             break;
         }
+        case NALU_TYPE_SEI:{
+            
+            break;
+        }
         default:{
             //if (p_Inp->silent == FALSE)
             printf ("Found NALU type %d, len %d undefined, ignore NALU, moving on\n", (int) nal_unit_type, (int) len);

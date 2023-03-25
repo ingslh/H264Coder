@@ -32,6 +32,7 @@ enum NalRefIdc{
     NALU_PRIORITY_DISPOSABLE  = 0
 };
 
+class VideoParameters;
 class Nalu{
 
 public:
