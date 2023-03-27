@@ -15,7 +15,8 @@ struct VideoParameters{
   std::map<int, pic_parameter_set_rbsp*> PicParSet;
 
   int structure;
-  
+  int Is_primary_correct;          //!< if primary frame is correct, 0: incorrect
+  int Is_redundant_correct;        //!< if redundant frame is correct, 0:incorrect
 
   ~VideoParameters(){
   }

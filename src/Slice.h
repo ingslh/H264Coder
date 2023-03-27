@@ -33,6 +33,7 @@ private:
     void ref_pic_list_reordering();
     void pred_weight_table();
     void dec_ref_pic_marking();
+    void error_tracking(VideoParameters *p_Vid);
 
 private:
     BitStream* bs = nullptr;

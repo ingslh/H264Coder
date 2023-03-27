@@ -282,8 +282,6 @@ void Slice::pred_weight_table(){
 }
 
 void Slice::dec_ref_pic_marking(){
-
-
   if (idr_flag ){
     no_output_of_prior_pics_flag = bs->bs_read_u1();
     //p_Vid->no_output_of_prior_pics_flag = pSlice->no_output_of_prior_pics_flag;
@@ -310,6 +308,23 @@ void Slice::dec_ref_pic_marking(){
         }while(val != 0);
     }
   }
+}
+
+void Slice::error_tracking(VideoParameters* vptr){
+    if(redundant_pic_cnt == 0){
+        vptr->Is_primary_correct = vptr->Is_redundant_correct = 1;
+    }
+
+    if(redundant_pic_cnt == 0 && slice_type != SI_SLICE){
+        for(int i = 0; i < num_ref_idx_active[LIST_0]; ++i){
+            if(ref_flag[i] == 0)
+                vptr->Is_primary_correct = 0;
+        }
+    }
+    else if(redundant_pic_cnt != 0 && slice_type != I_SLICE){
+        if(ref_flag[redundant_slice_ref_idx] == 0)
+            vptr->Is_redundant_correct = 0;
+    }
 }
 
 }
