@@ -327,4 +327,42 @@ void Slice::error_tracking(VideoParameters* vptr){
     }
 }
 
+bool Slice::is_new_pic(Slice* old_slice){
+    bool ret = false;
+
+    ret |= (old_slice->pic_parameter_set_id != this->pic_parameter_set_id);
+
+    ret |= (old_slice->frame_num != this->frame_num);
+
+    ret |= (old_slice->field_pic_flag != this->field_pic_flag);
+
+    if(old_slice->field_pic_flag && this->field_pic_flag){
+        ret |= old_slice->bottom_field_flag != this->bottom_field_flag;
+    }
+
+    if(vptr->active_sps->pic_order_cnt_type == 0){
+        ret |= (old_slice->pic_order_cnt_lsb != this->pic_order_cnt_lsb);
+        if(vptr->active_pps->bottom_field_pic_order_in_frame_present_flag == 1 && !this->field_pic_flag){
+            ret |= (old_slice->delta_pic_order_cnt_bottom != this->delta_pic_order_cnt_bottom)
+        }
+    }
+
+    if(vptr->active_sps->pic_order_cnt_type == 1){
+        if(!vptr->active_sps->delta_pic_order_always_zero_flag){
+            ret |= (old_slice->delta_pic_order_cnt[0] != this->delta_pic_order_cnt[0]);
+            if(vptr->active_pps->bottom_field_pic_order_in_frame_present_flag == 1 && !this->field_pic_flag)
+                ret |= (old_slice->delta_pic_order_cnt[1] != this->delta_pic_order_cnt[1]);
+        }
+    }
+
+#if (MVC_EXTENSION_ENABLE)
+    //result |= (currSlice->view_id != p_old_slice->view_id);
+    //result |= (currSlice->inter_view_flag != p_old_slice->inter_view_flag);
+    //result |= (currSlice->anchor_pic_flag != p_old_slice->anchor_pic_flag);
+#endif
+
+    //ret |= this->layer_id != old_slice->layer_id;
+    return ret;
+}
+
 }

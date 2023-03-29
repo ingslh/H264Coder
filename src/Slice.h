@@ -28,6 +28,7 @@ class Slice{
 public:
     Slice(VideoParameters* VidParams, BitStream* curStream, Nalu* nalu);
     void readOneMacroblock(Macroblock* curMb);
+    bool is_new_pic(Slice* old_slice);
 
 private:
     void ref_pic_list_reordering();
